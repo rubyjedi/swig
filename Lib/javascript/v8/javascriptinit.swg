@@ -13,7 +13,7 @@ SWIG_V8_SetModule(void *, swig_module_info *swig_module) {
   global_obj->SetHiddenValue(SWIGV8_STRING_NEW("swig_module_info_data"), mod);
 #else
   v8::Local<v8::Private> privateKey = v8::Private::ForApi(v8::Isolate::GetCurrent(), SWIGV8_STRING_NEW("swig_module_info_data"));
-  global_obj->SetPrivate(SWIGV8_CURRENT_CONTEXT(), privateKey, mod);
+  global_obj->SetPrivate(SWIGV8_CURRENT_CONTEXT(), privateKey, mod).IsNothing();
 #endif
 }
 
