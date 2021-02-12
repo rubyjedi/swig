@@ -5,6 +5,7 @@
 LANGUAGE     = javascript
 NODEGYP = @NODEGYP@
 NODEJS = @NODEJS@
+TS_NODE := ts-node
 SCRIPTSUFFIX = _runme.js
 OBJEXT = @OBJEXT@
 SO = @SO@
@@ -35,7 +36,8 @@ TS_TEST_CASES = \
     typescript_interface \
 	typescript_two_interfaces \
 	typescript_inheritance \
-	typescript_multiple_inheritance
+	typescript_multiple_inheritance \
+	typescript_import
 
 CPP_TEST_CASES := $(TS_TEST_CASES)
 
@@ -92,11 +94,10 @@ ifeq (node,$(JSENGINE))
 
 	run_testcase = \
 		if [ -f $(srcdir)/$*_runme.ts ]; then \
-			tsc $(srcdir)/$*_runme.ts; \
-		fi && \
-		if [ -f $(srcdir)/$*$(SCRIPTSUFFIX) ]; then \
+			env NODE_PATH=$$PWD:$(srcdir) $(RUNTOOL) $(TS_NODE) $(srcdir)/$*_runme.ts; \
+		elif [ -f $(srcdir)/$*$(SCRIPTSUFFIX) ]; then \
 			env NODE_PATH=$$PWD:$(srcdir) $(RUNTOOL) $(NODEJS) $(srcdir)/$*$(SCRIPTSUFFIX); \
-		fi
+	    fi
 
 
   %.ctest:

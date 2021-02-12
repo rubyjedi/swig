@@ -356,7 +356,7 @@ public:
   TsTypeInterface *tsTypeEnumDeclaration;
   File *declarationFilePtr;
 
-  TypeScriptTypes() : generateTsTypes(false) {}
+  TypeScriptTypes() : generateTsTypes(false), emittedImport(false) {}
   virtual int classHandler(Node *n);
   virtual int membervariableHandler(Node *n);
   virtual int memberfunctionHandler(Node *n);
@@ -366,6 +366,7 @@ public:
   virtual int top(Node *n);
 
 private:
+  bool emittedImport;
   String *getBaseClass(Node *n);
   String *getTsTypeName(SwigType *t);
   String *typemapLookup(Node *n, const char *typemapName, SwigType *type);
@@ -2721,6 +2722,15 @@ int TypeScriptTypes::classHandler(Node *n)
   int returnValue = Language::classHandler(n);
   if (generateTsTypes)
   {
+    if (!emittedImport) {
+      String *swigType = NewString("SWIGTYPE");
+      String *typescriptImports = typemapLookup(n, "typescriptimports", swigType);
+      Printf(declarationFilePtr, "%s\n", typescriptImports);
+      Delete(swigType);
+      Delete(typescriptImports);
+      emittedImport = true;
+    }
+
     tsTypeInterfaceDeclaration->setBaseClassName(getBaseClass(n));
     tsTypeInterfaceDeclaration->typesFilePtr = declarationFilePtr;
     tsTypeInterfaceDeclaration->generateTsTypes();
@@ -2915,7 +2925,7 @@ String *TypeScriptTypes::getTsTypeName(SwigType *t)
   }
   if (!n)
   {
-    return NULL;
+    return t;
   }
 
   tsTypeName = Getattr(n, "tstypename");
