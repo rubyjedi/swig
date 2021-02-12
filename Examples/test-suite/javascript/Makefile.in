@@ -38,7 +38,8 @@ TS_TEST_CASES = \
 	typescript_two_interfaces \
 	typescript_inheritance \
 	typescript_multiple_inheritance \
-	typescript_import
+	typescript_import \
+	typescript_optional
 
 CPP_TEST_CASES := $(TS_TEST_CASES)
 
